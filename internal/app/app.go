@@ -12,6 +12,7 @@ import (
 	"github.com/serwennn/koreyik/internal/config"
 	"github.com/serwennn/koreyik/internal/server"
 	"github.com/serwennn/koreyik/internal/storage/pq"
+	"github.com/serwennn/koreyik/internal/storage/red"
 	"gitlab.com/greyxor/slogor"
 	"log/slog"
 	"net/http"
@@ -70,8 +71,6 @@ func Run() {
 		)
 	}
 
-	/* UNCOMMENT THIS ONE DAY
-
 	// Loading cache server (Redis)
 	cacheClient, err := red.New(cfg.CacheServer)
 	if err != nil {
@@ -90,8 +89,6 @@ func Run() {
 		)
 	}
 
-	*/
-
 	// Router
 	r := chi.NewRouter()
 
@@ -101,7 +98,7 @@ func Run() {
 		middleware.Recoverer,
 	)
 
-	routes.RegisterRoutes(r, stg, log)
+	routes.RegisterRoutes(r, stg, cacheClient, log)
 
 	// Load static files
 	workDir, _ := os.Getwd()

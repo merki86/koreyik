@@ -6,33 +6,34 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 	"github.com/serwennn/koreyik/internal/models"
 	"github.com/serwennn/koreyik/internal/storage/pq"
+	"github.com/serwennn/koreyik/internal/storage/red"
 	"log/slog"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type animeImpl struct{}
 
-func registerAnime(r chi.Router, stg *pq.Storage, log *slog.Logger) {
+func registerAnime(r chi.Router, stg *pq.Storage, cacheServer *red.CacheServer, log *slog.Logger) {
 	impl := &animeImpl{}
 
 	r.Route("/anime", func(r chi.Router) {
-		r.Get("/{id}", impl.getAnime(stg, log))
+		r.Get("/{id}", impl.getAnime(stg, cacheServer, log))
 		r.Post("/", impl.postAnime(stg))
 	})
 }
 
-func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerFunc {
+func (impl *animeImpl) getAnime(stg *pq.Storage, cacheServer *red.CacheServer, log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
 			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}
-
-		/* UNCOMMENT THIS ONE DAY
 
 		// Try to get an entry from Redis
 		pair := fmt.Sprintf("anime:%d", id)
@@ -49,8 +50,6 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 			return
 		}
 
-		*/
-
 		// Get an entry from the main storage
 		anime, err := models.GetAnime(stg, r.Context(), id)
 		if err != nil {
@@ -63,10 +62,8 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 		}
 		log.Debug("Got an entry from the storage")
 
-		/* UNCOMMENT THIS ONE DAY
-
 		// Serialize go struct to show it in json format
-		serialized, err = json.Marshal(anime)
+		serialized, err := json.Marshal(anime)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -85,9 +82,7 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 		}
 		log.Debug("Wrote an entry to the cache", slog.Int("ttl", 30))
 
-		*/
-
-		serialized, err := json.Marshal(anime)
+		serialized, err = json.Marshal(anime)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
