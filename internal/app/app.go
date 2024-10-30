@@ -145,8 +145,6 @@ func Run() {
 	stg.Shutdown()
 	log.Info("Storage has been shut down")
 
-	/* UNCOMMENT THIS ONE DAY
-
 	// Gracefully shutdown the cache server
 	err = cacheClient.Shutdown()
 	if err != nil {
@@ -157,8 +155,6 @@ func Run() {
 	} else {
 		log.Info("Cache server has been shutdown")
 	}
-
-	*/
 
 	log.Info("Server has been shut down")
 }
