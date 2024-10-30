@@ -32,25 +32,6 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 			return
 		}
 
-		/* UNCOMMENT THIS ONE DAY
-
-		// Try to get an entry from Redis
-		pair := fmt.Sprintf("anime:%d", id)
-		cached, err := cacheServer.Client.JSONGet(r.Context(), pair, "$").Result()
-		if err != nil && !errors.Is(err, redis.Nil) {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// If Redis has the entry, then return it
-		if cached != "" {
-			w.Write([]byte(cached))
-			log.Debug("Got an entry from the cache")
-			return
-		}
-
-		*/
-
 		// Get an entry from the main storage
 		anime, err := models.GetAnime(stg, r.Context(), id)
 		if err != nil {
@@ -62,30 +43,6 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 			return
 		}
 		log.Debug("Got an entry from the storage")
-
-		/* UNCOMMENT THIS ONE DAY
-
-		// Serialize go struct to show it in json format
-		serialized, err = json.Marshal(anime)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Set entry in Redis
-		err = cacheServer.Client.JSONSet(r.Context(), pair, "$", serialized).Err()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		err = cacheServer.Client.Expire(r.Context(), pair, 30*time.Second).Err()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		log.Debug("Wrote an entry to the cache", slog.Int("ttl", 30))
-
-		*/
 
 		serialized, err := json.Marshal(anime)
 		if err != nil {

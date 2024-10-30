@@ -70,28 +70,6 @@ func Run() {
 		)
 	}
 
-	/* UNCOMMENT THIS ONE DAY
-
-	// Loading cache server (Redis)
-	cacheClient, err := red.New(cfg.CacheServer)
-	if err != nil {
-		log.Error("Failed to connect to the cache server", "error", err.Error())
-		os.Exit(1)
-	} else {
-		log.Info(
-			"Connected to the cache server",
-			slog.String("address", cfg.CacheServer.Address),
-			slog.Int("database", cfg.CacheServer.Database),
-		)
-
-		log.Debug("Cache server info",
-			slog.String("address", cfg.CacheServer.Address),
-			slog.Int("database", cfg.CacheServer.Database),
-		)
-	}
-
-	*/
-
 	// Router
 	r := chi.NewRouter()
 
@@ -147,21 +125,6 @@ func Run() {
 	// Gracefully shutdown the storage
 	stg.Shutdown()
 	log.Info("Storage has been shut down")
-
-	/* UNCOMMENT THIS ONE DAY
-
-	// Gracefully shutdown the cache server
-	err = cacheClient.Shutdown()
-	if err != nil {
-		log.Error(
-			"Failed to shut down the cache",
-			slog.String("error", err.Error()),
-		)
-	} else {
-		log.Info("Cache server has been shutdown")
-	}
-
-	*/
 
 	log.Info("Server has been shut down")
 }
