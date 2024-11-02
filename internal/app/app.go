@@ -4,15 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/joho/godotenv"
-	middlewareLogger "github.com/serwennn/koreyik/api/middleware/logger"
-	"github.com/serwennn/koreyik/api/routes"
-	"github.com/serwennn/koreyik/internal/config"
-	"github.com/serwennn/koreyik/internal/server"
-	"github.com/serwennn/koreyik/internal/storage/pq"
-	"gitlab.com/greyxor/slogor"
 	"log/slog"
 	"net/http"
 	"os"
@@ -21,6 +12,17 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
+	middlewareLogger "github.com/serwennn/koreyik/api/middleware/logger"
+	"github.com/serwennn/koreyik/api/routes"
+	"github.com/serwennn/koreyik/internal/config"
+	"github.com/serwennn/koreyik/internal/models"
+	"github.com/serwennn/koreyik/internal/server"
+	"github.com/serwennn/koreyik/internal/storage/pq"
+	"gitlab.com/greyxor/slogor"
 )
 
 const (
@@ -69,6 +71,8 @@ func Run() {
 			slog.String("username", cfg.Storage.Username),
 		)
 	}
+
+	stg.DB.AutoMigrate(&models.Anime{})
 
 	// Router
 	r := chi.NewRouter()
@@ -121,10 +125,6 @@ func Run() {
 		)
 		return
 	}
-
-	// Gracefully shutdown the storage
-	stg.Shutdown()
-	log.Info("Storage has been shut down")
 
 	log.Info("Server has been shut down")
 }

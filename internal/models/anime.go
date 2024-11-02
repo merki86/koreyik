@@ -2,9 +2,10 @@ package models
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5"
-	"github.com/serwennn/koreyik/internal/storage/pq"
 	"time"
+
+	pqdriver "github.com/lib/pq"
+	"github.com/serwennn/koreyik/internal/storage/pq"
 )
 
 type Anime struct {
@@ -21,40 +22,27 @@ type Anime struct {
 	StartedAiring  time.Time
 	FinishedAiring time.Time
 
-	Genres []string
-	Themes []string
+	Genres pqdriver.StringArray `gorm:"type:text[]"`
+	Themes pqdriver.StringArray `gorm:"type:text[]"`
 
 	Seasons  int
 	Episodes int
 	Duration int
 
-	Studios   []string
-	Producers []string
+	Studios   pqdriver.StringArray `gorm:"type:text[]"`
+	Producers pqdriver.StringArray `gorm:"type:text[]"`
 
 	//Related []MediaEntry
 }
 
-func CreateAnime(storage *pq.Storage, ctx context.Context, a Anime) error {
-	_, err := storage.DB.Exec(
-		ctx, "INSERT INTO animes VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)",
-		a.ID, a.ThumbnailURL, a.Description, a.Rating,
-		a.TitleKk, a.TitleJp, a.TitleEn,
-		a.Status, a.StartedAiring, a.FinishedAiring,
-		a.Genres, a.Themes,
-		a.Seasons, a.Episodes,
-		a.Duration, a.Studios, a.Producers,
-	)
-	if err != nil {
-		return err
-	}
-	return nil
+func CreateAnime(storage *pq.Storage, ctx context.Context, anime Anime) error {
+	return storage.DB.WithContext(ctx).Create(&anime).Error
 }
 
 func GetAnime(storage *pq.Storage, ctx context.Context, id int) (Anime, error) {
-	row, _ := storage.DB.Query(ctx, "SELECT * FROM animes WHERE id = $1", id)
+	var anime Anime
 
-	anime, err := pgx.CollectOneRow(row, pgx.RowToStructByName[Anime])
-	if err != nil {
+	if err := storage.DB.WithContext(ctx).First(&anime, id).Error; err != nil {
 		return Anime{}, err
 	}
 	return anime, nil
