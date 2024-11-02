@@ -9,6 +9,7 @@
 - Main programming language - [Go](https://go.dev/)
 - Database - [PostgreSQL](https://www.postgresql.org/about/)
 - Cache database - [Redis](https://redis.io/about/)
+- ORM - [GORM](https://gorm.io/)
 
 ### Go тілінің кітапханалар:
 - HTTP Server - [go-chi/chi](https://github.com/go-chi/chi)
