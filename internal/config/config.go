@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
-	"github.com/ilyakaznacheev/cleanenv"
 	"os"
 	"time"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
@@ -16,9 +17,10 @@ type Config struct {
 }
 
 type Server struct {
-	Address     string        `yaml:"address" env-default:"localhost:8080"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"30s"`
+	Address         string        `yaml:"address" env-default:"localhost:8080"`
+	Timeout         time.Duration `yaml:"timeout" env-default:"4s"`
+	IdleTimeout     time.Duration `yaml:"idle_timeout" env-default:"30s"`
+	ShutdownTimeout time.Duration `yaml:"shutdown_timeout" env-default:"10s"`
 }
 
 type Storage struct {
