@@ -2,8 +2,9 @@ package server
 
 import (
 	"context"
-	"github.com/serwennn/koreyik/internal/config"
 	"net/http"
+
+	"github.com/merki86/koreyik/internal/config"
 )
 
 type Server struct {

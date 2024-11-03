@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/serwennn/koreyik/internal/config"
+	"github.com/merki86/koreyik/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

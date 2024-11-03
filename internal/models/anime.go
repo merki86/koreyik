@@ -5,7 +5,7 @@ import (
 	"time"
 
 	pqdriver "github.com/lib/pq"
-	"github.com/serwennn/koreyik/internal/storage/pq"
+	"github.com/merki86/koreyik/internal/storage/pq"
 )
 
 type Anime struct {

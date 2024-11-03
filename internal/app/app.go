@@ -16,12 +16,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	middlewareLogger "github.com/serwennn/koreyik/api/middleware/logger"
-	"github.com/serwennn/koreyik/api/routes"
-	"github.com/serwennn/koreyik/internal/config"
-	"github.com/serwennn/koreyik/internal/models"
-	"github.com/serwennn/koreyik/internal/server"
-	"github.com/serwennn/koreyik/internal/storage/pq"
+	middlewareLogger "github.com/merki86/koreyik/api/middleware/logger"
+	"github.com/merki86/koreyik/api/routes"
+	"github.com/merki86/koreyik/internal/config"
+	"github.com/merki86/koreyik/internal/models"
+	"github.com/merki86/koreyik/internal/server"
+	"github.com/merki86/koreyik/internal/storage/pq"
 	"gitlab.com/greyxor/slogor"
 )
 

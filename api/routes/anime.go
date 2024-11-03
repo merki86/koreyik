@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5"
-	"github.com/serwennn/koreyik/internal/models"
-	"github.com/serwennn/koreyik/internal/storage/pq"
 	"log/slog"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
+	"github.com/merki86/koreyik/internal/models"
+	"github.com/merki86/koreyik/internal/storage/pq"
 )
 
 type animeImpl struct{}
