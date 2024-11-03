@@ -12,8 +12,9 @@ tasks:
     cmds:
       - go build -o {{.BINARY_PATH}} {{.ENTRY_POINT_PATH}}
   
-  run:
+  default:
     aliases:
+      - run
       - r
     
     cmds:
