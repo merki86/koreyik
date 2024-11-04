@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -21,7 +22,7 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 
 	r.Route("/anime", func(r chi.Router) {
 		r.Get("/{id}", impl.getAnime(stg, log))
-		r.Post("/", impl.postAnime(stg))
+		r.Post("/", impl.postAnime(stg, log))
 	})
 }
 
@@ -29,16 +30,17 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
+			log.Debug("Convert ID: " + err.Error())
 			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}
 
 		anime, err := services.GetAnimeById(id, r.Context(), stg)
 		if err != nil {
+			log.Debug("Get anime by ID: " + err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				http.Error(w, fmt.Sprintf("Anime not found. ID: %d", id), http.StatusNotFound)
 			} else {
-				log.Debug(err.Error())
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 			}
 			return
@@ -46,7 +48,7 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 
 		serialized, err := json.Marshal(anime)
 		if err != nil {
-			log.Debug(err.Error())
+			log.Debug("Marshal JSON: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
@@ -55,29 +57,42 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write(serialized)
 		if err != nil {
-			log.Debug(err.Error())
+			log.Debug("Write http response: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
 	}
 }
 
-func (impl *animeImpl) postAnime(stg *gorm.DB) http.HandlerFunc {
+func (impl *animeImpl) postAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var newAnime models.Anime
+		var anime models.Anime
 
-		err := json.NewDecoder(r.Body).Decode(&newAnime)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, "Json decode: "+err.Error(), http.StatusBadRequest)
+			log.Debug("Read body: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
-		err = models.CreateAnime(stg, r.Context(), newAnime)
+		err = json.Unmarshal(body, &anime)
 		if err != nil {
-			http.Error(w, "Create Anime: "+err.Error(), http.StatusInternalServerError)
+			log.Debug("Unmarshal JSON: " + err.Error())
+			if isValid := json.Valid(body); !isValid {
+				http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			} else {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+			return
+		}
+
+		err = services.CreateAnime(anime, r.Context(), stg)
+		if err != nil {
+			log.Debug("Create Anime: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		http.Redirect(w, r, fmt.Sprintf("/anime/%s", strconv.Itoa(newAnime.ID)), http.StatusFound)
+		http.Redirect(w, r, fmt.Sprintf("/anime/%s", strconv.Itoa(anime.ID)), http.StatusFound)
 	}
 }
