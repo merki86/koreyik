@@ -39,7 +39,7 @@ func CreateAnime(storage *gorm.DB, ctx context.Context, anime Anime) error {
 	return storage.WithContext(ctx).Create(&anime).Error
 }
 
-func GetAnime(storage *gorm.DB, ctx context.Context, id int) (Anime, error) {
+func GetAnimeById(storage *gorm.DB, ctx context.Context, id int) (Anime, error) {
 	var anime Anime
 
 	if err := storage.WithContext(ctx).First(&anime, id).Error; err != nil {

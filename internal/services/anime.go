@@ -8,5 +8,5 @@ import (
 )
 
 func GetAnimeById(id int, ctx context.Context, stg *gorm.DB) (models.Anime, error) {
-	return models.GetAnime(stg, ctx, id)
+	return models.GetAnimeById(stg, ctx, id)
 }
