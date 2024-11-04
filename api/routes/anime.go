@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5"
 	"github.com/merki86/koreyik/internal/models"
 	"gorm.io/gorm"
 )
@@ -33,10 +32,10 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 			return
 		}
 
-		// Get an entry from the main storage
+		// Get an entry from the storage
 		anime, err := models.GetAnime(stg, r.Context(), id)
 		if err != nil {
-			if errors.Is(err, pgx.ErrNoRows) {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				http.Error(w, fmt.Sprintf("Anime not found. ID: %d", id), http.StatusNotFound)
 			} else {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
