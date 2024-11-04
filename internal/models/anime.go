@@ -5,7 +5,7 @@ import (
 	"time"
 
 	pqdriver "github.com/lib/pq"
-	"github.com/merki86/koreyik/internal/storage/pq"
+	"gorm.io/gorm"
 )
 
 type Anime struct {
@@ -35,14 +35,14 @@ type Anime struct {
 	//Related []MediaEntry
 }
 
-func CreateAnime(storage *pq.Storage, ctx context.Context, anime Anime) error {
-	return storage.DB.WithContext(ctx).Create(&anime).Error
+func CreateAnime(storage *gorm.DB, ctx context.Context, anime Anime) error {
+	return storage.WithContext(ctx).Create(&anime).Error
 }
 
-func GetAnime(storage *pq.Storage, ctx context.Context, id int) (Anime, error) {
+func GetAnime(storage *gorm.DB, ctx context.Context, id int) (Anime, error) {
 	var anime Anime
 
-	if err := storage.DB.WithContext(ctx).First(&anime, id).Error; err != nil {
+	if err := storage.WithContext(ctx).First(&anime, id).Error; err != nil {
 		return Anime{}, err
 	}
 	return anime, nil

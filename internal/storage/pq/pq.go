@@ -1,7 +1,6 @@
 package pq
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/merki86/koreyik/internal/config"
@@ -9,13 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Storage struct {
-	DB *gorm.DB
-}
-
-var ctx = context.Background()
-
-func New(storageConfig config.Storage) (*Storage, error) {
+func New(storageConfig config.Storage) (*gorm.DB, error) {
 	url := databaseUrlCreator(storageConfig)
 
 	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
@@ -23,7 +16,7 @@ func New(storageConfig config.Storage) (*Storage, error) {
 		return nil, err
 	}
 
-	return &Storage{DB: db}, nil
+	return db, nil
 }
 
 func databaseUrlCreator(storage config.Storage) string {

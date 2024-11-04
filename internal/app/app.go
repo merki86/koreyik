@@ -72,7 +72,7 @@ func Run() {
 		)
 	}
 
-	stg.DB.AutoMigrate(&models.Anime{})
+	stg.AutoMigrate(&models.Anime{})
 
 	// Router
 	r := chi.NewRouter()

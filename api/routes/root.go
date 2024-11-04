@@ -4,10 +4,10 @@ import (
 	"log/slog"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/merki86/koreyik/internal/storage/pq"
+	"gorm.io/gorm"
 )
 
-func RegisterRoutes(r *chi.Mux, stg *pq.Storage, log *slog.Logger) {
+func RegisterRoutes(r *chi.Mux, stg *gorm.DB, log *slog.Logger) {
 	// Register the API routes
 	api := chi.NewRouter()
 

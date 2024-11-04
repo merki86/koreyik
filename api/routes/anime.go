@@ -11,12 +11,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/merki86/koreyik/internal/models"
-	"github.com/merki86/koreyik/internal/storage/pq"
+	"gorm.io/gorm"
 )
 
 type animeImpl struct{}
 
-func registerAnime(r chi.Router, stg *pq.Storage, log *slog.Logger) {
+func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 	impl := &animeImpl{}
 
 	r.Route("/anime", func(r chi.Router) {
@@ -25,7 +25,7 @@ func registerAnime(r chi.Router, stg *pq.Storage, log *slog.Logger) {
 	})
 }
 
-func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerFunc {
+func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
@@ -60,7 +60,7 @@ func (impl *animeImpl) getAnime(stg *pq.Storage, log *slog.Logger) http.HandlerF
 	}
 }
 
-func (impl *animeImpl) postAnime(stg *pq.Storage) http.HandlerFunc {
+func (impl *animeImpl) postAnime(stg *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var newAnime models.Anime
 
