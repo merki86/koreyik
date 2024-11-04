@@ -46,7 +46,8 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 
 		serialized, err := json.Marshal(anime)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Debug(err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
@@ -54,7 +55,8 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write(serialized)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Debug(err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
 	}
 }
