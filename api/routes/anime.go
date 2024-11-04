@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/merki86/koreyik/internal/models"
+	"github.com/merki86/koreyik/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -32,17 +33,16 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 			return
 		}
 
-		// Get an entry from the storage
-		anime, err := models.GetAnime(stg, r.Context(), id)
+		anime, err := services.GetAnimeById(id, r.Context(), stg)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				http.Error(w, fmt.Sprintf("Anime not found. ID: %d", id), http.StatusNotFound)
 			} else {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				log.Debug(err.Error())
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 			}
 			return
 		}
-		log.Debug("Got an entry from the storage")
 
 		serialized, err := json.Marshal(anime)
 		if err != nil {
