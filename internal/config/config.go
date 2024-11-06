@@ -41,13 +41,13 @@ func New() *Config {
 	// Get the path to the configuration file from the environment
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		fmt.Fprintf(os.Stderr, "CONFIG_PATH is not set")
+		fmt.Fprintf(os.Stderr, "Failed to find CONFIG_PATH environment variable")
 		os.Exit(1)
 	}
 
 	// Check if the configuration file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Configuration file %s does not exist", configPath)
+		fmt.Fprintf(os.Stderr, "Failed to find configuration file in %s", configPath)
 		os.Exit(1)
 	}
 

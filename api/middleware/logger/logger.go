@@ -1,10 +1,11 @@
 package logger
 
 import (
-	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func New(log *slog.Logger) func(next http.Handler) http.Handler {
@@ -23,7 +24,8 @@ func New(log *slog.Logger) func(next http.Handler) http.Handler {
 
 			t1 := time.Now()
 			defer func() {
-				entry.Info("Requested",
+				entry.Info(
+					"Requested",
 					slog.Int("status", ww.Status()),
 					slog.Int("bytes", ww.BytesWritten()),
 					slog.String("duration", time.Since(t1).String()),

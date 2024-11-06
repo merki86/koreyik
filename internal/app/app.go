@@ -53,7 +53,10 @@ func Run() {
 	// Loading database (PostgreSQL)
 	stg, err := pq.New(cfg.Storage)
 	if err != nil {
-		log.Error("Failed to connect to the storage", "error", err.Error())
+		log.Error(
+			"Failed to connect to the storage",
+			slog.String("error", err.Error()),
+		)
 		os.Exit(1)
 	} else {
 		log.Info(
@@ -62,7 +65,8 @@ func Run() {
 			slog.Int("port", cfg.Storage.Port),
 		)
 
-		log.Debug("Storage info",
+		log.Debug(
+			"Storage info",
 			slog.String("server", cfg.Storage.Server),
 			slog.Int("port", cfg.Storage.Port),
 			slog.String("database", cfg.Storage.Database),
