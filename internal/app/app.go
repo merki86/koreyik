@@ -57,7 +57,7 @@ func Run() {
 		os.Exit(1)
 	} else {
 		log.Info(
-			"Connected to the storage",
+			"Storage connected",
 			slog.String("server", cfg.Storage.Server),
 			slog.Int("port", cfg.Storage.Port),
 		)
@@ -96,7 +96,7 @@ func Run() {
 
 	timeTaken := time.Since(startTime)
 	log.Info(
-		fmt.Sprintf("Server is running on http://%s/", cfg.Server.Address),
+		fmt.Sprintf("Server started: http://%s", cfg.Server.Address),
 		slog.String("time_taken", timeTaken.String()),
 	)
 
@@ -118,7 +118,7 @@ func Run() {
 		return
 	}
 
-	log.Info("Server has been shut down")
+	log.Info("Server shut down")
 }
 
 func setupLogger(env string) *slog.Logger {
