@@ -5,6 +5,8 @@
 
 This is a small project. It is developing very slowly at the moment. It's main goal is to increase resources about anime in Kazakh.
 
+It is the repository of **backend-side** of the project. The **frontend-side** repository is located here -> [merki86/koreyik-frontend](https://github.com/merki86/koreyik-frontend).
+
 ## Used technologies:
 
 ### General:

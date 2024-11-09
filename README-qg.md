@@ -5,6 +5,8 @@
 
 Bul — kici joba. Qazirgi tañga, ol äreñ-äreñ jıljıp damıp jatır. Onıñ bastı maqsatı — anime tuwralı qazaqca qorlar köbeytiw.
 
+Bul — jobanıñ **backend-side** repositoriyi. **Frontend-side** repositoriyi -> [merki86/koreyik-frontend](https://github.com/merki86/koreyik-frontend) <- sol jerde ornalasqan.
+
 ## Qoldanılatın tehnologiyalar:
 
 ### Bastı:
