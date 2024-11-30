@@ -22,6 +22,7 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 
 	r.Route("/anime", func(r chi.Router) {
 		r.Get("/{id}", impl.getAnime(stg, log))
+		r.Get("/random", impl.getRandomAnime(stg, log))
 		r.Post("/", impl.postAnime(stg, log))
 	})
 }
@@ -60,6 +61,19 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 			log.Debug("Write http response: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
+	}
+}
+
+func (impl *animeImpl) getRandomAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := services.GetRandomAnimeId(r.Context(), stg)
+		if err != nil {
+			log.Debug("Get random anime: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("%d", id), http.StatusSeeOther)
 	}
 }
 

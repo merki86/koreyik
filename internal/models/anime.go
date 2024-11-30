@@ -47,3 +47,12 @@ func GetAnimeById(storage *gorm.DB, ctx context.Context, id int) (Anime, error) 
 	}
 	return anime, nil
 }
+
+func GetAnimeCount(storage *gorm.DB, ctx context.Context) (int64, error) {
+	var count int64
+
+	if err := storage.WithContext(ctx).Model(&Anime{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
