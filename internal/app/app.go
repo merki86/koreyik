@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	middlewareCORS "github.com/merki86/koreyik/api/middleware/cors"
 	middlewareLogger "github.com/merki86/koreyik/api/middleware/logger"
 	"github.com/merki86/koreyik/api/routes"
 	"github.com/merki86/koreyik/internal/config"
@@ -81,6 +82,7 @@ func Run() {
 
 	r.Use(
 		middlewareLogger.New(log),
+		middlewareCORS.New(log),
 		middleware.RequestID,
 		middleware.Recoverer,
 	)
