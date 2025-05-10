@@ -10,12 +10,14 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/merki86/koreyik/internal/models"
-	"github.com/merki86/koreyik/internal/services"
+	"github.com/merki86/koreyik/internal/model"
+	"github.com/merki86/koreyik/internal/service"
 	"gorm.io/gorm"
 )
 
-type animeImpl struct{}
+type animeImpl struct {
+	animeService *service.AnimeService
+}
 
 func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 	impl := &animeImpl{}
@@ -36,7 +38,7 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 			return
 		}
 
-		anime, err := services.GetAnimeById(id, r.Context(), stg)
+		anime, err := impl.animeService.GetAnimeById(id, r.Context(), stg)
 		if err != nil {
 			log.Debug("Get anime by ID: " + err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -66,7 +68,7 @@ func (impl *animeImpl) getAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc
 
 func (impl *animeImpl) getRandomAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := services.GetRandomAnimeId(r.Context(), stg)
+		id, err := impl.animeService.GetRandomAnimeId(r.Context(), stg)
 		if err != nil {
 			log.Debug("Get random anime: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -79,7 +81,7 @@ func (impl *animeImpl) getRandomAnime(stg *gorm.DB, log *slog.Logger) http.Handl
 
 func (impl *animeImpl) postAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var anime models.Anime
+		var anime model.Anime
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -99,7 +101,7 @@ func (impl *animeImpl) postAnime(stg *gorm.DB, log *slog.Logger) http.HandlerFun
 			return
 		}
 
-		err = services.CreateAnime(anime, r.Context(), stg)
+		err = impl.animeService.CreateAnime(anime, r.Context(), stg)
 		if err != nil {
 			log.Debug("Create Anime: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)

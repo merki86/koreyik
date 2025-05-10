@@ -18,7 +18,7 @@ import (
 	middlewareLogger "github.com/merki86/koreyik/api/middleware/logger"
 	"github.com/merki86/koreyik/api/routes"
 	"github.com/merki86/koreyik/internal/config"
-	"github.com/merki86/koreyik/internal/models"
+	"github.com/merki86/koreyik/internal/model"
 	"github.com/merki86/koreyik/internal/server"
 	"github.com/merki86/koreyik/internal/storage/pq"
 	"gitlab.com/greyxor/slogor"
@@ -75,7 +75,7 @@ func Run() {
 		)
 	}
 
-	stg.AutoMigrate(&models.Anime{})
+	stg.AutoMigrate(&model.Anime{})
 
 	// Router
 	r := chi.NewRouter()
