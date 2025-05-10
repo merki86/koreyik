@@ -10,15 +10,19 @@ import (
 )
 
 type AnimeService struct {
-	animeRepository *repository.AnimeRepository
+	AnimeRepository *repository.AnimeRepository
 }
 
-func (s *AnimeService) GetAnimeById(id int, ctx context.Context, stg *gorm.DB) (model.Anime, error) {
-	return s.animeRepository.GetAnimeById(stg, ctx, id)
+func (s *AnimeService) GetAnimeById(id int, ctx context.Context, stg *gorm.DB) (*model.Anime, error) {
+	anime, err := s.AnimeRepository.GetAnimeById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return anime, nil
 }
 
 func (s *AnimeService) GetRandomAnimeId(ctx context.Context, stg *gorm.DB) (int, error) {
-	max, err := s.animeRepository.GetAnimeCount(stg, ctx)
+	max, err := s.AnimeRepository.GetAnimeCount(stg, ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -28,5 +32,5 @@ func (s *AnimeService) GetRandomAnimeId(ctx context.Context, stg *gorm.DB) (int,
 }
 
 func (s *AnimeService) CreateAnime(anime model.Anime, ctx context.Context, stg *gorm.DB) error {
-	return s.animeRepository.CreateAnime(stg, ctx, anime)
+	return s.AnimeRepository.CreateAnime(stg, ctx, anime)
 }

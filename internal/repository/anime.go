@@ -8,20 +8,20 @@ import (
 )
 
 type AnimeRepository struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func (r *AnimeRepository) CreateAnime(storage *gorm.DB, ctx context.Context, anime model.Anime) error {
 	return storage.WithContext(ctx).Create(&anime).Error
 }
 
-func (r *AnimeRepository) GetAnimeById(storage *gorm.DB, ctx context.Context, id int) (model.Anime, error) {
+func (r *AnimeRepository) GetAnimeById(ctx context.Context, id int) (*model.Anime, error) {
 	var anime model.Anime
 
-	if err := storage.WithContext(ctx).First(&anime, id).Error; err != nil {
-		return model.Anime{}, err
+	if err := r.DB.WithContext(ctx).First(&anime, id).Error; err != nil {
+		return nil, err
 	}
-	return anime, nil
+	return &anime, nil
 }
 
 func (r *AnimeRepository) GetAnimeCount(storage *gorm.DB, ctx context.Context) (int64, error) {

@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/merki86/koreyik/internal/model"
+	"github.com/merki86/koreyik/internal/repository"
 	"github.com/merki86/koreyik/internal/service"
 	"gorm.io/gorm"
 )
@@ -20,7 +21,13 @@ type animeImpl struct {
 }
 
 func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
-	impl := &animeImpl{}
+	impl := &animeImpl{
+		animeService: &service.AnimeService{
+			AnimeRepository: &repository.AnimeRepository{
+				DB: stg,
+			},
+		},
+	}
 
 	r.Route("/anime", func(r chi.Router) {
 		r.Get("/{id}", impl.getAnime(stg, log))
