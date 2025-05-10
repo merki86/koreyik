@@ -6,14 +6,13 @@ import (
 
 	"github.com/merki86/koreyik/internal/model"
 	"github.com/merki86/koreyik/internal/repository"
-	"gorm.io/gorm"
 )
 
 type AnimeService struct {
 	AnimeRepository *repository.AnimeRepository
 }
 
-func (s *AnimeService) GetAnimeById(id int, ctx context.Context, stg *gorm.DB) (*model.Anime, error) {
+func (s *AnimeService) GetAnimeById(id int, ctx context.Context) (*model.Anime, error) {
 	anime, err := s.AnimeRepository.GetAnimeById(ctx, id)
 	if err != nil {
 		return nil, err
@@ -21,8 +20,8 @@ func (s *AnimeService) GetAnimeById(id int, ctx context.Context, stg *gorm.DB) (
 	return anime, nil
 }
 
-func (s *AnimeService) GetRandomAnimeId(ctx context.Context, stg *gorm.DB) (int, error) {
-	max, err := s.AnimeRepository.GetAnimeCount(stg, ctx)
+func (s *AnimeService) GetRandomAnimeId(ctx context.Context) (int, error) {
+	max, err := s.AnimeRepository.GetAnimeCount(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -31,6 +30,6 @@ func (s *AnimeService) GetRandomAnimeId(ctx context.Context, stg *gorm.DB) (int,
 	return id, nil
 }
 
-func (s *AnimeService) CreateAnime(anime model.Anime, ctx context.Context, stg *gorm.DB) error {
-	return s.AnimeRepository.CreateAnime(stg, ctx, anime)
+func (s *AnimeService) CreateAnime(anime model.Anime, ctx context.Context) error {
+	return s.AnimeRepository.CreateAnime(ctx, anime)
 }
