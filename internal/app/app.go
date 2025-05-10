@@ -133,7 +133,6 @@ func setupLogger(env string) *slog.Logger {
 	switch env {
 	case EnvLocal:
 		log = slog.New(
-			//slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 			slogor.NewHandler(os.Stdout, slogor.Options{
 				TimeFormat: "2006-01-02 15:04:05",
 				Level:      slog.LevelDebug,
