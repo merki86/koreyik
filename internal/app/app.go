@@ -31,7 +31,7 @@ const (
 
 func Run() {
 
-	// Counting server starting time
+	// Start timer
 	startTime := time.Now()
 
 	// Load .env file
@@ -51,7 +51,7 @@ func Run() {
 		slog.String("version", cfg.Version),
 	)
 
-	// Loading database (PostgreSQL)
+	// Load database (PostgreSQL)
 	stg, err := pq.New(cfg.Storage)
 	if err != nil {
 		log.Error(
@@ -75,9 +75,10 @@ func Run() {
 		)
 	}
 
+	// Sync models with database tables
 	stg.AutoMigrate(&model.Anime{})
 
-	// Router
+	// Configure router, middlewares
 	r := chi.NewRouter()
 
 	r.Use(
@@ -89,6 +90,7 @@ func Run() {
 
 	routes.RegisterRoutes(r, stg, log)
 
+	// Run server
 	srv := server.New(cfg, r)
 	go func() {
 		if err := srv.Run(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -100,6 +102,7 @@ func Run() {
 		}
 	}()
 
+	// Calculate elapsed time on running
 	timeTaken := time.Since(startTime)
 	log.Info(
 		fmt.Sprintf("Server started: http://%s", cfg.Server.Address),

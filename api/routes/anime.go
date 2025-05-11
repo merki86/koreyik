@@ -16,12 +16,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type animeImpl struct {
+type animeHandler struct {
 	animeService *service.AnimeService
 }
 
 func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
-	impl := &animeImpl{
+	handler := &animeHandler{
 		animeService: &service.AnimeService{
 			AnimeRepository: &repository.AnimeRepository{
 				DB: stg,
@@ -30,13 +30,13 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 	}
 
 	r.Route("/anime", func(r chi.Router) {
-		r.Get("/{id}", impl.getAnime(log))
-		r.Get("/random", impl.getRandomAnime(log))
-		r.Post("/", impl.postAnime(log))
+		r.Get("/{id}", handler.getAnime(log))
+		r.Get("/random", handler.getRandomAnime(log))
+		r.Post("/", handler.postAnime(log))
 	})
 }
 
-func (impl *animeImpl) getAnime(log *slog.Logger) http.HandlerFunc {
+func (h *animeHandler) getAnime(log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
@@ -45,7 +45,7 @@ func (impl *animeImpl) getAnime(log *slog.Logger) http.HandlerFunc {
 			return
 		}
 
-		anime, err := impl.animeService.GetAnimeById(id, r.Context())
+		anime, err := h.animeService.GetAnimeById(id, r.Context())
 		if err != nil {
 			log.Debug("Get anime by ID: " + err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -73,9 +73,9 @@ func (impl *animeImpl) getAnime(log *slog.Logger) http.HandlerFunc {
 	}
 }
 
-func (impl *animeImpl) getRandomAnime(log *slog.Logger) http.HandlerFunc {
+func (h *animeHandler) getRandomAnime(log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := impl.animeService.GetRandomAnimeId(r.Context())
+		id, err := h.animeService.GetRandomAnimeId(r.Context())
 		if err != nil {
 			log.Debug("Get random anime: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -86,7 +86,7 @@ func (impl *animeImpl) getRandomAnime(log *slog.Logger) http.HandlerFunc {
 	}
 }
 
-func (impl *animeImpl) postAnime(log *slog.Logger) http.HandlerFunc {
+func (h *animeHandler) postAnime(log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var anime model.Anime
 
@@ -108,7 +108,7 @@ func (impl *animeImpl) postAnime(log *slog.Logger) http.HandlerFunc {
 			return
 		}
 
-		err = impl.animeService.CreateAnime(anime, r.Context())
+		err = h.animeService.CreateAnime(anime, r.Context())
 		if err != nil {
 			log.Debug("Create Anime: " + err.Error())
 			http.Error(w, "Internal server error", http.StatusInternalServerError)

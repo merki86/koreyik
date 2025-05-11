@@ -11,10 +11,6 @@ type AnimeRepository struct {
 	DB *gorm.DB
 }
 
-func (r *AnimeRepository) CreateAnime(ctx context.Context, anime model.Anime) error {
-	return r.DB.WithContext(ctx).Create(&anime).Error
-}
-
 func (r *AnimeRepository) GetAnimeById(ctx context.Context, id int) (*model.Anime, error) {
 	var anime model.Anime
 
@@ -31,4 +27,8 @@ func (r *AnimeRepository) GetAnimeCount(ctx context.Context) (int64, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (r *AnimeRepository) CreateAnime(ctx context.Context, anime model.Anime) error {
+	return r.DB.WithContext(ctx).Create(&anime).Error
 }
