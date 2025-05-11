@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"math/rand/v2"
 
 	"github.com/merki86/koreyik/internal/model"
@@ -25,7 +26,12 @@ func (s *AnimeService) GetRandomAnimeId(ctx context.Context) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	id := rand.IntN(int(max))
+
+	// Get random number between 1 and max inclusive; [0; max) + 1 = [1; max]
+	if max <= 0 {
+		return 0, fmt.Errorf("invalid max value for generating random value (max must be greater than zero): %d", max)
+	}
+	id := rand.IntN(int(max)) + 1
 
 	return id, nil
 }
