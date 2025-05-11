@@ -18,15 +18,10 @@ import (
 	middlewareLogger "github.com/merki86/koreyik/api/middleware/logger"
 	"github.com/merki86/koreyik/api/routes"
 	"github.com/merki86/koreyik/internal/config"
+	"github.com/merki86/koreyik/internal/logger"
 	"github.com/merki86/koreyik/internal/model"
 	"github.com/merki86/koreyik/internal/server"
 	"github.com/merki86/koreyik/internal/storage/pq"
-	"gitlab.com/greyxor/slogor"
-)
-
-const (
-	EnvLocal = "local"
-	EnvProd  = "prod"
 )
 
 func Run() {
@@ -43,7 +38,7 @@ func Run() {
 
 	cfg := config.New()
 
-	log := setupLogger(cfg.Env)
+	log := logger.SetupLogger(cfg.Env)
 
 	log.Info(
 		"Starting Köreyik!",
@@ -128,29 +123,4 @@ func Run() {
 	}
 
 	log.Info("Server shut down")
-}
-
-func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
-
-	switch env {
-	case EnvLocal:
-		log = slog.New(
-			slogor.NewHandler(os.Stdout, slogor.Options{
-				TimeFormat: "2006-01-02 15:04:05",
-				Level:      slog.LevelDebug,
-				ShowSource: false,
-			}),
-		)
-	case EnvProd:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
-	default: // Default to production
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
-	}
-
-	return log
 }
