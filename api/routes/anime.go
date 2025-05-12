@@ -30,10 +30,13 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 	}
 
 	r.Route("/anime", func(r chi.Router) {
-		r.Get("/{id}", handler.getAnime(log))
-		r.Get("/random", handler.getRandomAnime(log))
 		r.Post("/", handler.postAnime(log))
+
+		r.Get("/{id}", handler.getAnime(log))
 		r.Put("/{id}", handler.updateAnime(log))
+		r.Delete("/{id}", handler.deleteAnime(log))
+
+		r.Get("/random", handler.getRandomAnime(log))
 	})
 }
 
@@ -164,7 +167,31 @@ func (h *animeHandler) updateAnime(log *slog.Logger) http.HandlerFunc {
 		anime.ID = id
 		err = h.animeService.UpdateAnime(anime, r.Context())
 		if err != nil {
-			log.Debug("Update Anime: " + err.Error())
+			log.Debug("Update Anime by ID: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		// Write response
+		w.WriteHeader(http.StatusOK)
+		http.Redirect(w, r, fmt.Sprintf("/anime/%s", strconv.Itoa(anime.ID)), http.StatusFound)
+	}
+}
+
+func (h *animeHandler) deleteAnime(log *slog.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get ID from URL and convert to int
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			log.Debug("Convert ID: " + err.Error())
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
+			return
+		}
+
+		// Delete anime
+		err = h.animeService.DeleteAnime(id, r.Context())
+		if err != nil {
+			log.Debug("Delete Anime by ID: " + err.Error())
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				http.Error(w, fmt.Sprintf("Anime not found. ID: %d", id), http.StatusNotFound)
 			} else {
@@ -175,6 +202,5 @@ func (h *animeHandler) updateAnime(log *slog.Logger) http.HandlerFunc {
 
 		// Write response
 		w.WriteHeader(http.StatusOK)
-		http.Redirect(w, r, fmt.Sprintf("/anime/%s", strconv.Itoa(anime.ID)), http.StatusFound)
 	}
 }
