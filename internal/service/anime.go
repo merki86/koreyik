@@ -39,3 +39,11 @@ func (s *AnimeService) GetRandomAnimeId(ctx context.Context) (int, error) {
 func (s *AnimeService) CreateAnime(anime model.Anime, ctx context.Context) error {
 	return s.AnimeRepository.CreateAnime(ctx, anime)
 }
+
+func (s *AnimeService) UpdateAnime(anime model.Anime, ctx context.Context) error {
+	return s.AnimeRepository.UpdateAnime(ctx, anime)
+}
+
+func (s *AnimeService) DeleteAnime(id int, ctx context.Context) error {
+	return s.AnimeRepository.DeleteAnime(ctx, id)
+}

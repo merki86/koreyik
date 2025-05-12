@@ -32,3 +32,11 @@ func (r *AnimeRepository) GetAnimeCount(ctx context.Context) (int64, error) {
 func (r *AnimeRepository) CreateAnime(ctx context.Context, anime model.Anime) error {
 	return r.DB.WithContext(ctx).Create(&anime).Error
 }
+
+func (r *AnimeRepository) UpdateAnime(ctx context.Context, anime model.Anime) error {
+	return r.DB.WithContext(ctx).Save(&anime).Error
+}
+
+func (r *AnimeRepository) DeleteAnime(ctx context.Context, id int) error {
+	return r.DB.WithContext(ctx).Delete(&model.Anime{}, id).Error
+}
