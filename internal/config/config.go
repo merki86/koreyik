@@ -9,11 +9,10 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" env-default:"prod"`
-	Version     string `yaml:"version" env-default:"0.0.0"`
-	Server      `yaml:"server"`
-	Storage     `yaml:"storage"`
-	CacheServer `yaml:"cache_server"`
+	Env     string `yaml:"env" env-default:"prod"`
+	Version string `yaml:"version" env-default:"0.0.0"`
+	Server  `yaml:"server"`
+	Storage `yaml:"storage"`
 }
 
 type Server struct {
@@ -29,12 +28,6 @@ type Storage struct {
 	Port     int    `yaml:"port" env-default:"5432"`
 	Username string `yaml:"username" env-required:"true"`
 	Password string `yaml:"password" env:"storage_password" env-required:"true"`
-}
-
-type CacheServer struct {
-	Address  string `yaml:"address" env-default:"localhost:6379"`
-	Password string `yaml:"password" env:"cache_server_password" env-required:"true"`
-	Database int    `yaml:"database" env-default:"0"`
 }
 
 func New() *Config {

@@ -14,7 +14,7 @@ Osı direktoriya jobanıñ konfigurasıya (picindeme) fayıldarı saqtaydı.
 Create `local.yaml` or `prod.yaml` in this directory and fill the fields below:
 ```yaml
 env: "local" # local/prod
-version: "v0.1.0-alpha"
+version: "v1.0.1"
 
 server:
   address: "localhost:8080"
