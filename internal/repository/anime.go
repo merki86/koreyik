@@ -11,6 +11,15 @@ type AnimeRepository struct {
 	DB *gorm.DB
 }
 
+func (r *AnimeRepository) GetAnimes(ctx context.Context) ([]model.Anime, error) {
+	var animes []model.Anime
+
+	if err := r.DB.WithContext(ctx).Find(&animes).Error; err != nil {
+		return nil, err
+	}
+	return animes, nil
+}
+
 func (r *AnimeRepository) GetAnimeById(ctx context.Context, id int) (*model.Anime, error) {
 	var anime model.Anime
 

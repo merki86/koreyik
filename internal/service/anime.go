@@ -13,6 +13,14 @@ type AnimeService struct {
 	AnimeRepository *repository.AnimeRepository
 }
 
+func (s *AnimeService) GetAnimes(ctx context.Context) ([]model.Anime, error) {
+	animes, err := s.AnimeRepository.GetAnimes(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return animes, nil
+}
+
 func (s *AnimeService) GetAnimeById(id int, ctx context.Context) (*model.Anime, error) {
 	anime, err := s.AnimeRepository.GetAnimeById(ctx, id)
 	if err != nil {

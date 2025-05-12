@@ -30,6 +30,7 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 	}
 
 	r.Route("/anime", func(r chi.Router) {
+		r.Get("/", handler.getAnimes(log))
 		r.Post("/", handler.postAnime(log))
 
 		r.Get("/{id}", handler.getAnime(log))
@@ -38,6 +39,30 @@ func registerAnime(r chi.Router, stg *gorm.DB, log *slog.Logger) {
 
 		r.Get("/random", handler.getRandomAnime(log))
 	})
+}
+
+func (h *animeHandler) getAnimes(log *slog.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get animes
+		animes, err := h.animeService.GetAnimes(r.Context())
+		if err != nil {
+			log.Debug("Get animes: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		// Struct to JSON
+		serialized, err := json.Marshal(animes)
+		if err != nil {
+			log.Debug("Marshal JSON: " + err.Error())
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(serialized)
+	}
 }
 
 func (h *animeHandler) getAnime(log *slog.Logger) http.HandlerFunc {
